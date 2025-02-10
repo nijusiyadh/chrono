@@ -12,3 +12,99 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Users {
+  id        Int      @id @default(autoincrement())
+  uId       String   @unique
+  email     String   @unique
+  username  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects        Projects[]
+  events          Events[]
+  statusLogs      StatusLogs[]
+  Activity        Activities[]
+  ActivityRecords ActivityRecords[]
+
+  @@map("users")
+}
+
+model Projects {
+  id        Int      @id @default(autoincrement())
+  name      String
+  userId    Int
+  user      Users    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events Events[]
+
+  @@map("projects")
+}
+
+model Events {
+  id          Int        @id @default(autoincrement())
+  projectId   Int
+  project     Projects   @relation(fields: [projectId], references: [id])
+  description String?
+  startTime   DateTime
+  endTime     DateTime   @default(now())
+  duration    Int
+  date        DateTime   @default(now())
+  userId      Int
+  user        Users      @relation(fields: [userId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  logId       Int
+  log         StatusLogs @relation(fields: [logId], references: [id], onDelete: Cascade)
+
+  @@map("events")
+}
+
+model StatusLogs {
+  id            Int      @id @default(autoincrement())
+  date          DateTime
+  day           Int
+  totalDuration Int
+  userId        Int
+  user          Users    @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  events          Events[]
+  activityRecords ActivityRecords[]
+
+  @@unique([date, userId])
+  @@map("status_logs")
+}
+
+model Activities {
+  id        Int      @id @default(autoincrement())
+  name      String
+  userId    Int
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  activityRecords ActivityRecords[]
+
+  @@map("activities")
+}
+
+model ActivityRecords {
+  id         Int        @id @default(autoincrement())
+  date       DateTime   @default(now())
+  logId      Int
+  log        StatusLogs @relation(fields: [logId], references: [id])
+  activityId Int
+  activity   Activities @relation(fields: [activityId], references: [id])
+  userId     Int
+  user       Users      @relation(fields: [userId], references: [id])
+  value      String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@unique([logId, activityId, date])
+  @@map("activity_records")
+}

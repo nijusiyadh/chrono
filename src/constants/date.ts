@@ -1,0 +1,1 @@
+export const HEADER_DATE_FORMAT = 'EEEE, dd MMMM yyyy'
