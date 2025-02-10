@@ -34,7 +34,7 @@ jobs:
 
       - name: Run TypeScript
         run: npm run type-check
-      
+
   deploy-to-vercel:
     name: Deploy to Vercel
     runs-on: ubuntu-latest
@@ -58,8 +58,4 @@ jobs:
         run: npm run build
 
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-args: '--prod --yes'
-
+        run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
