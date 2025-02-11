@@ -6,7 +6,7 @@ import { dark } from '@clerk/themes'
 import { GlobalProvider, ProfileSync } from '@/providers'
 import { QueryClientProviderWrapper } from '@/providers'
 import { ModalProvider } from '@/providers'
-import { Bounce, ToastContainer } from 'react-toastify'
+import { Toaster } from 'sonner'
 
 const roboto = Roboto_Mono({
   variable: '--font-roboto-mono',
@@ -30,7 +30,7 @@ export default function RootLayout({
     >
       <html lang='en' suppressHydrationWarning>
         <body
-          className={`${roboto.variable} ${roboto.className} max-w-desktop bg-bg-primary mx-auto min-h-screen w-full antialiased`}
+          className={`${roboto.variable} ${roboto.className} mx-auto min-h-screen w-full max-w-desktop bg-bg-primary antialiased`}
         >
           <main className='relative h-full w-full'>
             <QueryClientProviderWrapper>
@@ -38,19 +38,7 @@ export default function RootLayout({
                 <GlobalProvider>{children}</GlobalProvider>
                 <ProfileSync />
               </ModalProvider>
-              <ToastContainer
-                position='top-right'
-                autoClose={2000}
-                hideProgressBar
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme='dark'
-                transition={Bounce}
-              />
+              <Toaster richColors />
             </QueryClientProviderWrapper>
           </main>
         </body>

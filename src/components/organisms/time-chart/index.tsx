@@ -1,10 +1,11 @@
 'use client'
 
-import { RowContent } from '@/components/atoms/row-content'
+import { RowContent } from '@/components/atoms'
+import { LoadingSkeleton } from '@/components/atoms/loading-skeleton'
 import { useGetEvents } from '@/hooks/api/useGetEvents'
+import { useGlobalContext } from '@/providers'
 import clsx from 'clsx'
-import React from 'react'
-import { SyncLoader } from 'react-spinners'
+import React, { useEffect } from 'react'
 
 const tableHeadings = [
   'Project',
@@ -14,20 +15,24 @@ const tableHeadings = [
   'Duration'
 ]
 export const TimeChart = () => {
-  const { data: events, isLoading } = useGetEvents()
+  const { activeDate } = useGlobalContext()
+  const {
+    data: events,
+    isLoading,
+    refetch,
+    isFetching
+  } = useGetEvents(activeDate ?? undefined)
 
-  if (isLoading) {
-    return (
-      <div className='flex w-full max-w-6xl items-center justify-center gap-2'>
-        <SyncLoader size={20} color='white' />
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (activeDate) {
+      refetch()
+    }
+  }, [activeDate, refetch])
 
   return (
-    <div className='w-full max-w-6xl'>
+    <div className='flex w-full max-w-6xl flex-col gap-2'>
       <table className='w-full'>
-        <thead className='bg-bg-secondary text-text-faded w-full'>
+        <thead className='w-full bg-bg-secondary text-text-faded'>
           <tr>
             {tableHeadings.map((item, index) => (
               <th
@@ -44,19 +49,26 @@ export const TimeChart = () => {
           </tr>
         </thead>
         <tbody>
-          {events ? (
-            events.map((item, index) => (
-              <RowContent
-                key={index}
-                variant={(index + 1) % 2 === 0 ? 'secondary' : 'primary'}
-                data={item}
-              />
-            ))
-          ) : (
-            <div>No events found</div>
+          {!isLoading && !isFetching && (
+            <>
+              {events &&
+                events.map((item, index) => (
+                  <RowContent
+                    key={index}
+                    variant={(index + 1) % 2 === 0 ? 'secondary' : 'primary'}
+                    data={item}
+                  />
+                ))}
+            </>
           )}
         </tbody>
       </table>
+      {(isLoading || isFetching) && <LoadingSkeleton />}
+      {!events?.length && !isLoading && (
+        <div className='flex w-full flex-col items-center justify-center gap-2 py-4 text-xl text-text-faded'>
+          No events found
+        </div>
+      )}
     </div>
   )
 }

@@ -85,7 +85,7 @@ export const addEvent = async (data: {
   }
 }
 
-export const getEvents = async () => {
+export const getEvents = async (date?: string) => {
   const user = await currentUser()
 
   const existing = await prismaClient.users.findFirst({
@@ -100,12 +100,18 @@ export const getEvents = async () => {
 
   try {
     const today = new Date()
-    today.setUTCHours(0, 0, 0, 0)
+
+    const startOfDay = new Date(date ?? today)
+    startOfDay.setHours(0, 0, 0, 0) // 00:00:00
+
+    const endOfDay = new Date(date ?? today)
+    endOfDay.setHours(23, 59, 59, 999)
 
     const events = await prismaClient.events.findMany({
       where: {
         date: {
-          gte: today
+          lte: endOfDay,
+          gte: startOfDay
         },
         userId: existing.id
       },
