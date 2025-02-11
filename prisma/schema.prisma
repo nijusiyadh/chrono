@@ -74,6 +74,7 @@ model StatusLogs {
 
   events          Events[]
   activityRecords ActivityRecords[]
+  activities      ActivitiesOnLogs[]
 
   @@unique([date, userId])
   @@map("status_logs")
@@ -88,8 +89,18 @@ model Activities {
   updatedAt DateTime @updatedAt
 
   activityRecords ActivityRecords[]
+  statusLogs      ActivitiesOnLogs[]
 
   @@map("activities")
+}
+
+model ActivitiesOnLogs {
+  statusLogId Int
+  activityId  Int
+  statusLog   StatusLogs @relation(fields: [statusLogId], references: [id])
+  activity    Activities @relation(fields: [activityId], references: [id])
+
+  @@id([statusLogId, activityId]) // Composite Primary Key
 }
 
 model ActivityRecords {
@@ -105,6 +116,6 @@ model ActivityRecords {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
-  @@unique([logId, activityId, date])
+  @@unique([logId, activityId])
   @@map("activity_records")
 }

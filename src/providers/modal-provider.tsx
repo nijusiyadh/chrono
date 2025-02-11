@@ -25,7 +25,7 @@ export const ModalProvider: React.FC<React.PropsWithChildren> = ({
   return (
     <ModalContext.Provider value={{ closeModal, showModal }}>
       {modalBody ? (
-        <div className='fixed inset-0 z-30 flex h-full w-full items-center justify-center bg-black/50 text-white'>
+        <div className='fixed inset-0 z-50 flex h-full w-full items-center justify-center bg-black/50 text-white'>
           <div className='flex flex-col items-center justify-center gap-8'>
             {modalBody}
             <div>

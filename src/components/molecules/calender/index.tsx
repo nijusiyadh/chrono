@@ -1,13 +1,13 @@
-import Calendar from 'react-calendar';
-import './style.css';
+import Calendar from 'react-calendar'
+import './style.css'
 
-type ValuePiece = Date | null;
+type ValuePiece = Date | null
 
-type Value = ValuePiece | [ValuePiece, ValuePiece];
+type Value = ValuePiece | [ValuePiece, ValuePiece]
 
 interface CalendarModalProps {
-  value: Value;
-  onChange: (date: Value) => void;
+  value: Value
+  onChange: (date: Value) => void
 }
 
 export const CalendarModal = ({ value, onChange }: CalendarModalProps) => {
@@ -21,5 +21,5 @@ export const CalendarModal = ({ value, onChange }: CalendarModalProps) => {
         value={value}
       />
     </div>
-  );
-};
+  )
+}
