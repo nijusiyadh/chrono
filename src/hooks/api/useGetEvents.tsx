@@ -7,11 +7,11 @@ export type EventResponse = Events & {
   project: Projects
 }
 
-export const useGetEvents = () => {
+export const useGetEvents = (date?: string) => {
   return useQuery({
     queryKey: [QUERY_KEYS.events],
     queryFn: async () => {
-      const events = await getEvents()
+      const events = await getEvents(date)
       return events
     }
   })

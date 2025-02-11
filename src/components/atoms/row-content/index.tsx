@@ -2,22 +2,11 @@
 import { useOutsideClick } from '@/hooks'
 import { EventResponse } from '@/hooks/api/useGetEvents'
 import { useUpdateEvent } from '@/hooks/api/useUpdateEvent'
+import { formatTimeDuration } from '@/utils/date-time'
 import clsx from 'clsx'
-import { intervalToDuration } from 'date-fns'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-
-import { toast } from 'react-toastify'
-
-const formatTime = (seconds: number): string => {
-  const duration = intervalToDuration({ start: 0, end: seconds * 1000 }) // Convert seconds to milliseconds
-
-  const hours = String(duration.hours ?? 0).padStart(2, '0')
-  const minutes = String(duration.minutes ?? 0).padStart(2, '0')
-  const secs = String(duration.seconds ?? 0).padStart(2, '0')
-
-  return `${hours}:${minutes}:${secs}`
-}
+import { toast } from 'sonner'
 
 export const RowContent = ({
   data,
@@ -27,7 +16,7 @@ export const RowContent = ({
   data: EventResponse
 }) => {
   const [isEditable, setIsEditable] = useState(false)
-  const { register, getValues, reset } = useForm({
+  const { register, getValues, resetField, handleSubmit } = useForm({
     defaultValues: {
       description: data.description ?? ''
     }
@@ -45,7 +34,7 @@ export const RowContent = ({
       {
         onSuccess: () => {
           setIsEditable(false)
-          reset()
+          resetField('description')
           toast.success('Event updated successfully')
         },
         onError: () => {
@@ -60,14 +49,14 @@ export const RowContent = ({
   return (
     <tr
       key={data.id}
-      className={clsx('bg-bg-secondary text-text-white w-full text-start', {
+      className={clsx('w-full bg-bg-secondary text-start text-text-white', {
         'bg-transparent': variant === 'primary'
       })}
     >
       <td className='py-4 pl-16 text-base'>{data.project.name}</td>
       <td className='py-4 pl-6 text-base'>
         <button
-          className='min-h-6 w-full rounded-md text-start'
+          className='min-h-6 w-full max-w-[170px] rounded-md text-start'
           onDoubleClick={() => setIsEditable(true)}
         >
           {isEditable ? (
@@ -75,22 +64,25 @@ export const RowContent = ({
               ref={inputRef}
               className='flex w-full items-center justify-start gap-2'
             >
-              <input
-                placeholder='Description'
-                contentEditable={isUpdating ? false : true}
-                className='rounded-md bg-transparent px-2 py-2 text-start text-white focus:outline-none'
-                type='text'
-                {...register('description')}
-              />
+              <form onSubmit={handleSubmit(handleUpdateEvent)}>
+                <input
+                  autoFocus
+                  disabled={isUpdating}
+                  maxLength={20}
+                  className='h-6 rounded-md bg-transparent text-start focus:outline-none'
+                  type='text'
+                  {...register('description')}
+                />
+              </form>
             </div>
           ) : (
-            <span>
+            <span className=''>
               {data.description ? (
-                <span>{data.description}</span>
-              ) : (
-                <span className='text-text-faded text-xs'>
-                  Double click to edit
+                <span className='flex overflow-hidden text-ellipsis'>
+                  {data.description}
                 </span>
+              ) : (
+                <span className='text-xs text-text-faded'>Add Description</span>
               )}
             </span>
           )}
@@ -102,9 +94,9 @@ export const RowContent = ({
       <td className='py-4 pl-6 text-base'>
         {data.endTime.toLocaleTimeString()}
       </td>
-      <td className='text-text-yellow py-4 pl-6 pr-10 text-base'>
-        <span className='bg-bg-secondary rounded-md px-3 py-1'>
-          {formatTime(data.duration)}
+      <td className='py-4 pl-6 pr-10 text-base text-text-yellow'>
+        <span className='rounded-md bg-bg-secondary px-3 py-1'>
+          {formatTimeDuration(data.duration)}
         </span>
       </td>
     </tr>

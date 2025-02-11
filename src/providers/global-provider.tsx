@@ -1,13 +1,14 @@
 'use client'
 
 import { ProjectListType } from '@/types'
+import { format } from 'date-fns'
 import React, { createContext, useContext, useState } from 'react'
 
 type GlobalContextTypes = {
   activeProject: ProjectListType | null
-  activeDate: Date | null
+  activeDate: string | null
   setActiveProject: React.Dispatch<React.SetStateAction<ProjectListType | null>>
-  setActiveDate: React.Dispatch<React.SetStateAction<Date | null>>
+  setActiveDate: (date: Date) => void
   description: string
   setDescription: React.Dispatch<React.SetStateAction<string>>
 }
@@ -24,14 +25,20 @@ export const GlobalProvider: React.FC<React.PropsWithChildren> = ({
   )
   const [description, setDescription] = useState<string>('')
 
-  const [activeDate, setActiveDate] = useState<Date | null>(null)
+  const [date, setDate] = useState<string | null>(null)
+
+  const setActiveDate = (date: Date) => {
+    const newDate = new Date(date)
+    const formattedDate = format(newDate, 'yyyy-MM-dd HH:mm:ss.SSS')
+    setDate(formattedDate)
+  }
 
   return (
     <GlobalContext.Provider
       value={{
         activeProject,
         setActiveProject,
-        activeDate,
+        activeDate: date,
         setActiveDate,
         description,
         setDescription
