@@ -27,15 +27,19 @@ export const LogListTableBody = ({ logData }: { logData: LogsType }) => {
           <td className='py-4 pl-6 text-base'>
             {formatTotalDuration(log.totalDuration)}
           </td>
-          {log.activities.map(item => (
-            <td key={item.activity.id} className={clsx('py-4 pl-6 text-base')}>
-              <ValueFields
-                activityRecord={item.activity.activityRecords}
-                activityId={item.activity.id}
-                logId={log.id}
-              />
-            </td>
-          ))}
+          {log.activities.length ?
+            log.activities.map(item => (
+              <td
+                key={item.activity.id}
+                className={clsx('py-4 pl-6 text-base')}
+              >
+                <ValueFields
+                  activityRecord={item.activity.activityRecords}
+                  activityId={item.activity.id}
+                  logId={log.id}
+                />
+              </td>
+            )) : null}
         </tr>
       ))}
     </>
