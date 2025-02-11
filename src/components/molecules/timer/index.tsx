@@ -2,18 +2,22 @@
 
 import { ResetIcon } from '@/assets/images'
 import { useAddEvent } from '@/hooks/api/useAddEvent'
-import { toUTCFormat } from '@/utils/date-time'
+import { formatTotalDuration, toUTCFormat } from '@/utils/date-time'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import { useStopwatch } from 'react-timer-hook'
 import { format } from 'date-fns'
 import { toast } from 'react-toastify'
 import { CiPause1, CiPlay1 } from 'react-icons/ci'
+import { useGetLog } from '@/hooks/api/useGetLogToday'
+import { AiOutlineLoading } from 'react-icons/ai'
 
 export const Timer = () => {
-  const { mutateAsync: addEvent, isPending } = useAddEvent()
+  const { mutateAsync: addEvent, isPending: isAddingEvent } = useAddEvent()
   const [startTime, setStartTime] = useState<Date | null>(null)
   const [endTime, setEndTime] = useState<Date | null>(null)
+
+  const { data: logs, isLoading: isLoadingLogs } = useGetLog()
 
   const {
     seconds,
@@ -82,13 +86,20 @@ export const Timer = () => {
             {seconds < 10 ? `0${seconds}` : seconds}
           </span>
         </span>
-        <span className='text-text-faded text-center text-xl'>
-          Total time tracked: 3hr 45m 52s
+        <span className='text-text-faded flex items-center justify-center gap-2 text-center text-xl'>
+          Total time tracked:{' '}
+          {isLoadingLogs ? (
+            <span>
+              <AiOutlineLoading className='text-text-white size-5 animate-spin' />
+            </span>
+          ) : (
+            <span>{formatTotalDuration(logs?.[0]?.totalDuration ?? 0)}</span>
+          )}
         </span>
       </div>
       <div className='flex items-start justify-center gap-5'>
         <button
-          disabled={isPending}
+          disabled={isAddingEvent}
           onClick={handlePlayButtonClick}
           className='border-text-yellow relative flex aspect-square w-14 items-center justify-center rounded-full border-2'
         >

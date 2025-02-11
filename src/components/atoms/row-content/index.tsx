@@ -2,22 +2,12 @@
 import { useOutsideClick } from '@/hooks'
 import { EventResponse } from '@/hooks/api/useGetEvents'
 import { useUpdateEvent } from '@/hooks/api/useUpdateEvent'
+import { formatTimeDuration } from '@/utils/date-time'
 import clsx from 'clsx'
-import { intervalToDuration } from 'date-fns'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { toast } from 'react-toastify'
-
-const formatTime = (seconds: number): string => {
-  const duration = intervalToDuration({ start: 0, end: seconds * 1000 }) // Convert seconds to milliseconds
-
-  const hours = String(duration.hours ?? 0).padStart(2, '0')
-  const minutes = String(duration.minutes ?? 0).padStart(2, '0')
-  const secs = String(duration.seconds ?? 0).padStart(2, '0')
-
-  return `${hours}:${minutes}:${secs}`
-}
 
 export const RowContent = ({
   data,
@@ -104,7 +94,7 @@ export const RowContent = ({
       </td>
       <td className='text-text-yellow py-4 pl-6 pr-10 text-base'>
         <span className='bg-bg-secondary rounded-md px-3 py-1'>
-          {formatTime(data.duration)}
+          {formatTimeDuration(data.duration)}
         </span>
       </td>
     </tr>

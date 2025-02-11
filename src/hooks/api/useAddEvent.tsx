@@ -18,6 +18,9 @@ export const useAddEvent = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.events]
       })
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.logs]
+      })
     }
   })
 }
