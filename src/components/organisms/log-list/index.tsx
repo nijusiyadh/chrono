@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, CustomDatePicker } from '@/components/atoms'
 import clsx from 'clsx'
 import { FaPlus } from 'react-icons/fa'
@@ -11,6 +11,7 @@ import { useAddActivity } from '@/hooks/api/useAddActivity'
 import { toast } from 'sonner'
 import { useGetDailyLogs } from '@/hooks/api/useGetDailyLogs'
 import { LogListTableBody } from '../log-list-table-body'
+import { format } from 'date-fns'
 
 export const LogList = () => {
   const [fromDate, setFromDate] = useState<Date | null>(null)
@@ -19,7 +20,17 @@ export const LogList = () => {
   const { mutateAsync: addActivity, isPending: isAddingActivity } =
     useAddActivity()
 
-  const { data: logData, isLoading: isLogsLoading } = useGetDailyLogs()
+  const {
+    data: logData,
+    isLoading: isLogsLoading,
+    isFetching: isFetchingLogs,
+    refetch: refetchLogs
+  } = useGetDailyLogs({
+    startDate: fromDate
+      ? format(fromDate, 'yyyy-MM-dd HH:mm:ss.SSS')
+      : undefined,
+    endDate: toDate ? format(toDate, 'yyyy-MM-dd HH:mm:ss.SSS') : undefined
+  })
 
   const { register, handleSubmit, resetField } = useForm({
     defaultValues: {
@@ -46,17 +57,24 @@ export const LogList = () => {
   const { data: activities, isLoading: isLoadingActivities } =
     useGetActivities()
 
-  if (isLoadingActivities || isLogsLoading) {
-    return (
-      <div className='w-full'>
-        <LoadingSkeleton />
-      </div>
-    )
+  useEffect(() => {
+    refetchLogs()
+  }, [refetchLogs, fromDate, toDate])
+
+  const handleClearFilters = () => {
+    setFromDate(null)
+    setToDate(null)
   }
 
   return (
     <div className='flex flex-col gap-6'>
       <div className='flex w-full items-center justify-end gap-4'>
+        <Button
+          onClick={handleClearFilters}
+          className='!w-fit rounded-md px-6 py-2 text-white'
+        >
+          All
+        </Button>
         <CustomDatePicker
           buttonText='From Date'
           selectedDate={fromDate}
@@ -67,9 +85,6 @@ export const LogList = () => {
           selectedDate={toDate}
           onChange={setToDate}
         />
-        <Button className='!w-fit rounded-md px-6 py-2 text-white'>
-          View Analytics
-        </Button>
       </div>
 
       <div className='flex gap-4'>
@@ -107,7 +122,9 @@ export const LogList = () => {
             </tr>
           </thead>
           <tbody>
-            {logData && logData.length > 0 ? (
+            {!(isLoadingActivities || isLogsLoading || isFetchingLogs) &&
+            logData &&
+            logData.length > 0 ? (
               <LogListTableBody logData={logData} />
             ) : null}
           </tbody>
@@ -121,6 +138,16 @@ export const LogList = () => {
           </button>
         )}
       </div>
+      {(isLoadingActivities || isLogsLoading || isFetchingLogs) && (
+        <LoadingSkeleton />
+      )}
+      {!(isLoadingActivities || isLogsLoading || isFetchingLogs) &&
+        logData?.length === 0 &&
+        !isLogsLoading && (
+          <div className='flex w-full flex-col items-center justify-center gap-2 py-4 text-xl text-text-faded'>
+            No logs found
+          </div>
+        )}
     </div>
   )
 }
