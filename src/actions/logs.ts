@@ -41,3 +41,49 @@ export const getTodayLogs = async (date?: string) => {
     throw new Error('Failed to get logs', { cause: error })
   }
 }
+
+export const getLogs = async () => {
+  const user = await currentUser()
+
+  const existing = await prismaClient.users.findFirst({
+    where: {
+      uId: user?.id
+    }
+  })
+
+  if (!existing) {
+    throw new Error('Unauthorized')
+  }
+
+  try {
+    const logs = await prismaClient.statusLogs.findMany({
+      where: {
+        userId: existing.id
+      },
+      include: {
+        activityRecords: {
+          include: {
+            activity: true
+          }
+        },
+        activities: {
+          include: {
+            activity: {
+              include: {
+                activityRecords: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'asc'
+      }
+    })
+
+    return logs
+  } catch (error) {
+    console.log(error)
+    throw new Error('Failed to get logs', { cause: error })
+  }
+}

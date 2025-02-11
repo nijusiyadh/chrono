@@ -54,6 +54,22 @@ export const addEvent = async (data: {
           }
         })
 
+        const activities = await tx.activities.findMany({
+          where: {
+            userId: existing.id
+          },
+          select: {
+            id: true
+          }
+        })
+
+        await tx.activitiesOnLogs.createMany({
+          data: activities.map(activity => ({
+            statusLogId: updatedLog.id,
+            activityId: activity.id
+          }))
+        })
+
         const project = await tx.projects.findUnique({
           where: {
             id: data.projectId

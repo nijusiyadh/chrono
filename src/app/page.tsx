@@ -1,10 +1,15 @@
+'use client'
+import { PreLoader } from '@/components/atoms'
 import { Header, TimerHero } from '@/components/organisms'
+import { Suspense } from 'react'
 
 export default function Home() {
   return (
-    <main>
+    <div>
       <Header />
-      <TimerHero />
-    </main>
+      <Suspense fallback={<PreLoader />}>
+        <TimerHero />
+      </Suspense>
+    </div>
   )
 }

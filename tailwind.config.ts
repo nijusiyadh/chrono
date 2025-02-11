@@ -16,11 +16,12 @@ export default {
         'text-faded': '#706565',
         'text-white': '#D0D0D0',
         'text-green': '#00B077',
-        'bg-gray': '#646669'
+        'bg-gray': '#646669',
+        'bg-gray-light': '#a9a9a9',
       },
       maxWidth: {
         195: '724px',
-        desktop: '1440px'
+        desktop: '1600px'
       }
     }
   },

@@ -93,7 +93,7 @@ export const Header = () => {
 
   const handleProfileButtonClick = () => {
     showModal(
-      <div className='bg-bg-secondary flex w-96 flex-col gap-4' ref={modalRef}>
+      <div className='flex w-96 flex-col gap-4 bg-bg-secondary' ref={modalRef}>
         <button
           onClick={handleSignOut}
           className='rounded-lg bg-red-500 px-4 py-2 text-white'
@@ -113,12 +113,12 @@ export const Header = () => {
   }
 
   return (
-    <div className='bg-bg-primary sticky top-0 flex w-full items-center justify-between px-28 py-8'>
+    <div className='sticky top-0 z-30 flex w-full items-center justify-between bg-bg-primary px-28 py-8'>
       <div className='flex items-start justify-center gap-14'>
         <Link href={'/'}>
           <Image src={ChronoLogo} width={83} height={30} alt='ChronoLogo' />
         </Link>
-        <div className='text-text-white flex gap-9 text-center text-base'>
+        <div className='flex gap-9 text-center text-base text-text-white'>
           <Link href={'/daily-logs'}>Daily Log</Link>
           <Link href={'/analytics'}>Analytics</Link>
         </div>
@@ -128,7 +128,7 @@ export const Header = () => {
 
       <SignedIn>
         <div className='flex items-center justify-center gap-6'>
-          <div className='bg-bg-secondary text-text-white flex items-center justify-center gap-8 rounded px-4 py-2'>
+          <div className='flex items-center justify-center gap-8 rounded bg-bg-secondary px-4 py-2 text-text-white'>
             <span>{showDate}</span>
             <button onClick={handleDateButtonClick}>
               <Image

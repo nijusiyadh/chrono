@@ -31,7 +31,7 @@ export const TimeChart = () => {
 
   return (
     <div className='flex w-full max-w-6xl flex-col gap-2'>
-      <table className='w-full'>
+      <table className='w-full table-fixed'>
         <thead className='w-full bg-bg-secondary text-text-faded'>
           <tr>
             {tableHeadings.map((item, index) => (
