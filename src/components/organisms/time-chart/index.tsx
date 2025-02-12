@@ -1,8 +1,8 @@
 'use client'
 
-import { RowContent } from '@/components/atoms'
+import { PreLoader, RowContent } from '@/components/atoms'
 import { LoadingSkeleton } from '@/components/atoms/loading-skeleton'
-import { useGetEvents } from '@/hooks/api/useGetEvents'
+import { useGetEvents } from '@/hooks/api'
 import { useGlobalContext } from '@/providers'
 import clsx from 'clsx'
 import React, { useEffect } from 'react'
@@ -28,6 +28,10 @@ export const TimeChart = () => {
       refetch()
     }
   }, [activeDate, refetch])
+
+  if (isLoading) {
+    return <PreLoader />
+  }
 
   return (
     <div className='flex w-full max-w-6xl flex-col gap-2'>

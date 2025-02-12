@@ -1,7 +1,7 @@
 'use client'
 
 import { ResetIcon } from '@/assets/images'
-import { useAddEvent } from '@/hooks/api/useAddEvent'
+import { useAddEvent } from '@/hooks/api'
 import { formatTotalDuration } from '@/utils/date-time'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
@@ -9,12 +9,12 @@ import { useStopwatch } from 'react-timer-hook'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 import { CiPause1, CiPlay1 } from 'react-icons/ci'
-import { useGetLog } from '@/hooks/api/useGetLogToday'
+import { useGetLog } from '@/hooks/api'
 import { AiOutlineLoading } from 'react-icons/ai'
 import { useGlobalContext } from '@/providers'
 
 export const Timer = () => {
-  const { activeDate } = useGlobalContext()
+  const { activeDate, activeProject } = useGlobalContext()
   const { mutateAsync: addEvent, isPending: isAddingEvent } = useAddEvent()
   const [startTime, setStartTime] = useState<Date | null>(null)
 
@@ -53,9 +53,12 @@ export const Timer = () => {
       setStartTime(new Date())
     } else {
       pause()
+      if (!activeProject) {
+        return toast.error('Please select a project')
+      }
       await addEvent(
         {
-          projectId: 2,
+          projectId: activeProject?.id,
           startTime: format(
             new Date(startTime ?? ''),
             'yyyy-MM-dd HH:mm:ss.SSS'

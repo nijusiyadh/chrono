@@ -1,8 +1,9 @@
 export const ROUTES = {
   home: '/',
-  register: '/register',
-};
+  daily_logs: '/daily-logs',
+  analytics: '/analytics',
+  projects: '/projects'
+}
 
-
-export const ACCESS_TOKEN_KEY = 'access_token';
-export const REFRESH_TOKEN_KEY = 'refresh_token';
+export const ACCESS_TOKEN_KEY = 'access_token'
+export const REFRESH_TOKEN_KEY = 'refresh_token'
