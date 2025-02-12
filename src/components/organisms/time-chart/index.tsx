@@ -68,7 +68,7 @@ export const TimeChart = () => {
         </tbody>
       </table>
       {(isLoading || isFetching) && <LoadingSkeleton />}
-      {!events?.length && !isLoading && (
+      {!events?.length && !isLoading && !isFetching && (
         <div className='flex w-full flex-col items-center justify-center gap-2 py-4 text-xl text-text-faded'>
           No events found
         </div>

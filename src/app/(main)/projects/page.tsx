@@ -30,9 +30,11 @@ export default function Projects() {
         {
           onSuccess: () => {
             setProjectName('')
-            closeModal()
-            setIsModalOpen(false)
             toast.success('Project added successfully')
+            setTimeout(() => {
+              closeModal()
+              setIsModalOpen(false)
+            }, 0)
           },
           onError: () => {
             toast.error('Failed to add project')
