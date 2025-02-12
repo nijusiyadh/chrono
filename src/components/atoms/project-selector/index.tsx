@@ -35,7 +35,10 @@ export const ProjectSelector = () => {
           setActiveProject(project)
           closeModal()
         }}
-        onManageClick={() => router.push(ROUTES.projects)}
+        onManageClick={() => {
+          closeModal()
+          router.push(ROUTES.projects)
+        }}
         ref={modalRef}
         projects={projects ?? []}
       />
