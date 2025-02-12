@@ -1,12 +1,17 @@
 'use client'
 import { useOutsideClick } from '@/hooks'
-import { EventResponse } from '@/hooks/api'
+import {
+  EventResponse,
+  useGetProjects,
+  useUpdateEventProject
+} from '@/hooks/api'
 import { useUpdateEvent } from '@/hooks/api'
 import { formatTimeDuration } from '@/utils/date-time'
 import clsx from 'clsx'
 import { format } from 'date-fns'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { AiOutlineLoading } from 'react-icons/ai'
 import { toast } from 'sonner'
 
 export const RowContent = ({
@@ -17,13 +22,21 @@ export const RowContent = ({
   data: EventResponse
 }) => {
   const [isEditable, setIsEditable] = useState(false)
+  const [isProjectEditable, setIsProjectEditable] = useState(false)
+  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
+    null
+  )
   const { register, getValues, resetField, handleSubmit } = useForm({
     defaultValues: {
       description: data.description ?? ''
     }
   })
+  const { data: projects, isLoading: isProjectsLoading } = useGetProjects()
 
   const { mutateAsync: updateEvent, isPending: isUpdating } = useUpdateEvent()
+
+  const { mutateAsync: updateEventProject, isPending: isUpdatingProject } =
+    useUpdateEventProject()
 
   const handleUpdateEvent = async () => {
     const { description } = getValues()
@@ -46,6 +59,29 @@ export const RowContent = ({
   }
 
   const inputRef = useOutsideClick<HTMLDivElement>(() => handleUpdateEvent())
+  const selectRef = useOutsideClick<HTMLDivElement>(() =>
+    setIsProjectEditable(false)
+  )
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      updateEventProject(
+        {
+          id: data.id,
+          projectId: selectedProjectId
+        },
+        {
+          onSuccess: () => {
+            toast.success('Event updated successfully')
+            setIsProjectEditable(false)
+          },
+          onError: () => {
+            toast.error('Failed to update event')
+          }
+        }
+      )
+    }
+  }, [selectedProjectId, updateEventProject, data.id])
 
   return (
     <tr
@@ -54,7 +90,44 @@ export const RowContent = ({
         'bg-transparent': variant === 'primary'
       })}
     >
-      <td className='py-4 pl-16 text-base'>{data.project.name}</td>
+      <td className='py-4 pl-16 text-base'>
+        {isProjectEditable ? (
+          <div>
+            {isProjectsLoading ? (
+              <div className='flex w-full items-center justify-start gap-2'>
+                <AiOutlineLoading
+                  size={18}
+                  className='animate-spin text-text-white'
+                />
+              </div>
+            ) : (
+              <div ref={selectRef} className='rounded-md bg-bg-secondary px-2'>
+                <select
+                  name='project'
+                  id='project'
+                  disabled={isUpdatingProject}
+                  className='w-full rounded-md border-2 border-none border-text-faded bg-bg-secondary text-text-white focus:outline-none'
+                  onChange={e => setSelectedProjectId(Number(e.target.value))}
+                  defaultValue={data.projectId}
+                >
+                  {projects?.map(project => (
+                    <option key={project.id} value={project.id}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button
+            className='cursor-pointer'
+            onDoubleClick={() => setIsProjectEditable(true)}
+          >
+            {data.project.name}
+          </button>
+        )}
+      </td>
       <td className='py-4 pl-6 text-base'>
         <button
           className='min-h-6 w-full max-w-[170px] rounded-md text-start'
