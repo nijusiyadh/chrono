@@ -4,6 +4,7 @@ import { EventResponse } from '@/hooks/api'
 import { useUpdateEvent } from '@/hooks/api'
 import { formatTimeDuration } from '@/utils/date-time'
 import clsx from 'clsx'
+import { format } from 'date-fns'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -89,10 +90,10 @@ export const RowContent = ({
         </button>
       </td>
       <td className='py-4 pl-6 text-base'>
-        {data.startTime.toLocaleTimeString()}
+        {format(data.startTime, 'HH:mm:ss')}
       </td>
       <td className='py-4 pl-6 text-base'>
-        {data.endTime.toLocaleTimeString()}
+        {format(data.endTime, 'HH:mm:ss')}
       </td>
       <td className='py-4 pl-6 pr-10 text-base text-text-yellow'>
         <span className='rounded-md bg-bg-secondary px-3 py-1'>
