@@ -4,23 +4,22 @@ import { CalenderIcon } from '@/assets/images'
 import { ChronoLogo } from '@/assets/svgs'
 import { NavArrowButton } from '@/components/atoms'
 import { CalendarModal } from '@/components/molecules'
+import { ROUTES } from '@/constants'
 import { HEADER_DATE_FORMAT } from '@/constants/date'
 import { useOutsideClick } from '@/hooks'
 import { useGlobalContext, useModal } from '@/providers'
 import { toUTCFormat } from '@/utils/date-time'
-import { SignedIn, SignedOut, useClerk } from '@clerk/clerk-react'
+import { SignedIn, UserButton } from '@clerk/clerk-react'
 import { format } from 'date-fns'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { FaUser } from 'react-icons/fa'
 
 type ValuePiece = Date | null
 
 type Value = ValuePiece | [ValuePiece, ValuePiece]
 
 export const Header = () => {
-  const { signOut } = useClerk()
   const { setActiveDate } = useGlobalContext()
   const [date, setDate] = useState<Value>(new Date())
   const modalRef = useOutsideClick<HTMLDivElement>(() => closeModal())
@@ -78,11 +77,6 @@ export const Header = () => {
     })
   }
 
-  const handleSignOut = async () => {
-    await signOut()
-    closeModal()
-  }
-
   const handleDateButtonClick = () => {
     showModal(
       <div ref={modalRef}>
@@ -91,40 +85,18 @@ export const Header = () => {
     )
   }
 
-  const handleProfileButtonClick = () => {
-    showModal(
-      <div className='flex w-96 flex-col gap-4 bg-bg-secondary' ref={modalRef}>
-        <button
-          onClick={handleSignOut}
-          className='rounded-lg bg-red-500 px-4 py-2 text-white'
-        >
-          Log Out
-        </button>
-      </div>
-    )
-  }
-
-  const renderUserIconButton = () => {
-    return (
-      <button onClick={handleProfileButtonClick}>
-        <FaUser size={24} className='text-text-white' />
-      </button>
-    )
-  }
-
   return (
     <div className='sticky top-0 z-30 flex w-full items-center justify-between bg-bg-primary px-28 py-8'>
       <div className='flex items-start justify-center gap-14'>
-        <Link href={'/'}>
+        <Link href={ROUTES.home}>
           <Image src={ChronoLogo} width={83} height={30} alt='ChronoLogo' />
         </Link>
         <div className='flex gap-9 text-center text-base text-text-white'>
-          <Link href={'/daily-logs'}>Daily Log</Link>
-          <Link href={'/analytics'}>Analytics</Link>
+          <Link href={ROUTES.daily_logs}>Daily Log</Link>
+          <Link href={ROUTES.analytics}>Analytics</Link>
+          <Link href={ROUTES.projects}>Projects</Link>
         </div>
       </div>
-
-      <SignedOut>{renderUserIconButton()}</SignedOut>
 
       <SignedIn>
         <div className='flex items-center justify-center gap-6'>
@@ -143,7 +115,7 @@ export const Header = () => {
             <NavArrowButton onClick={decrementDate} direction='left' />
             <NavArrowButton onClick={incrementDate} direction='right' />
           </div>
-          {renderUserIconButton()}
+          <UserButton />
         </div>
       </SignedIn>
     </div>

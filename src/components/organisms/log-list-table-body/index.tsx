@@ -1,6 +1,6 @@
 import { getLogs } from '@/actions/logs'
 import { useOutsideClick } from '@/hooks'
-import { useAddActivityRecord } from '@/hooks/api/useAddActivityRecord'
+import { useAddActivityRecord } from '@/hooks/api'
 import { formatTotalDuration } from '@/utils/date-time'
 import { ActivityRecords } from '@prisma/client'
 import clsx from 'clsx'

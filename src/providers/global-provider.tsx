@@ -1,13 +1,14 @@
 'use client'
 
 import { ProjectListType } from '@/types'
+import { Projects } from '@prisma/client'
 import { format } from 'date-fns'
 import React, { createContext, useContext, useState } from 'react'
 
 type GlobalContextTypes = {
   activeProject: ProjectListType | null
   activeDate: string | null
-  setActiveProject: React.Dispatch<React.SetStateAction<ProjectListType | null>>
+  setActiveProject: React.Dispatch<React.SetStateAction<Projects | null>>
   setActiveDate: (date: Date) => void
   description: string
   setDescription: React.Dispatch<React.SetStateAction<string>>
@@ -20,9 +21,7 @@ const GlobalContext = createContext<GlobalContextTypes>(
 export const GlobalProvider: React.FC<React.PropsWithChildren> = ({
   children
 }) => {
-  const [activeProject, setActiveProject] = useState<ProjectListType | null>(
-    null
-  )
+  const [activeProject, setActiveProject] = useState<Projects | null>(null)
   const [description, setDescription] = useState<string>('')
 
   const [date, setDate] = useState<string | null>(null)

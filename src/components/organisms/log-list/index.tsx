@@ -1,15 +1,15 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { Button, CustomDatePicker } from '@/components/atoms'
+import React, { useEffect, useRef, useState } from 'react'
+import { Button, CustomDatePicker, PreLoader } from '@/components/atoms'
 import clsx from 'clsx'
 import { FaPlus } from 'react-icons/fa'
-import { useGetActivities } from '@/hooks/api/useGetActivities'
+import { useGetActivities } from '@/hooks/api'
 import { LoadingSkeleton } from '@/components/atoms/loading-skeleton'
 import { useForm } from 'react-hook-form'
-import { useAddActivity } from '@/hooks/api/useAddActivity'
+import { useAddActivity } from '@/hooks/api'
 import { toast } from 'sonner'
-import { useGetDailyLogs } from '@/hooks/api/useGetDailyLogs'
+import { useGetDailyLogs } from '@/hooks/api'
 import { LogListTableBody } from '../log-list-table-body'
 import { format } from 'date-fns'
 
@@ -19,6 +19,8 @@ export const LogList = () => {
   const [newActivity, setNewActivity] = useState<boolean>(false)
   const { mutateAsync: addActivity, isPending: isAddingActivity } =
     useAddActivity()
+
+  const isFirstRender = useRef(true)
 
   const {
     data: logData,
@@ -65,6 +67,15 @@ export const LogList = () => {
     setFromDate(null)
     setToDate(null)
   }
+
+  if (
+    (isLoadingActivities || isLogsLoading || isFetchingLogs) &&
+    isFirstRender.current
+  ) {
+    return <PreLoader />
+  }
+
+  isFirstRender.current = false
 
   return (
     <div className='flex flex-col gap-6'>

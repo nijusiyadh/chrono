@@ -77,7 +77,7 @@ export const getLogs = async () => {
         }
       },
       orderBy: {
-        createdAt: 'asc'
+        createdAt: 'desc'
       }
     })
 
