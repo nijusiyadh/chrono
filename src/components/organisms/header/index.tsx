@@ -19,7 +19,7 @@ type ValuePiece = Date | null
 
 type Value = ValuePiece | [ValuePiece, ValuePiece]
 
-export const Header = () => {
+export const Header = ({ showTimer = true }: { showTimer?: boolean }) => {
   const { setActiveDate } = useGlobalContext()
   const [date, setDate] = useState<Value>(new Date())
   const modalRef = useOutsideClick<HTMLDivElement>(() => closeModal())
@@ -100,21 +100,25 @@ export const Header = () => {
 
       <SignedIn>
         <div className='flex items-center justify-center gap-6'>
-          <div className='flex items-center justify-center gap-8 rounded bg-bg-secondary px-4 py-2 text-text-white'>
-            <span>{showDate}</span>
-            <button onClick={handleDateButtonClick}>
-              <Image
-                src={CalenderIcon}
-                width={18}
-                height={19.5}
-                alt='calender icon'
-              />
-            </button>
-          </div>
-          <div className='flex gap-3'>
-            <NavArrowButton onClick={decrementDate} direction='left' />
-            <NavArrowButton onClick={incrementDate} direction='right' />
-          </div>
+          {showTimer && (
+            <>
+              <div className='flex items-center justify-center gap-8 rounded bg-bg-secondary px-4 py-2 text-text-white'>
+                <span>{showDate}</span>
+                <button onClick={handleDateButtonClick}>
+                  <Image
+                    src={CalenderIcon}
+                    width={18}
+                    height={19.5}
+                    alt='calender icon'
+                  />
+                </button>
+              </div>
+              <div className='flex gap-3'>
+                <NavArrowButton onClick={decrementDate} direction='left' />
+                <NavArrowButton onClick={incrementDate} direction='right' />
+              </div>
+            </>
+          )}
           <UserButton />
         </div>
       </SignedIn>

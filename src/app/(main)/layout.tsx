@@ -8,7 +8,7 @@ export default function MainLayout({
 }) {
   return (
     <div className='flex w-full flex-col gap-10'>
-      <Header />
+      <Header showTimer={false} />
       <div className='px-28'>{children}</div>
     </div>
   )

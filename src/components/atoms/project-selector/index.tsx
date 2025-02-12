@@ -83,15 +83,21 @@ const SelectorBody = ({
       ref={ref}
       className='flex w-[294px] flex-col gap-6 rounded-2xl bg-bg-secondary p-6'
     >
-      <div className='flex w-full flex-col gap-2'>
-        {projects.map(project => (
-          <ProjectButton
-            variant='secondary'
-            buttonText={project.name}
-            key={project.id}
-            onClick={() => onClick(project)}
-          />
-        ))}
+      <div className='flex w-full flex-col gap-2 max-h-[600px] overflow-y-auto'>
+        {projects.length > 0 ? (
+          projects.map(project => (
+            <ProjectButton
+              variant='secondary'
+              buttonText={project.name}
+              key={project.id}
+              onClick={() => onClick(project)}
+            />
+          ))
+        ) : (
+          <div className='flex w-full flex-col items-center justify-center gap-2 py-4 text-xl text-text-faded'>
+            No projects found
+          </div>
+        )}
       </div>
       <ProjectButton
         variant='primary'
