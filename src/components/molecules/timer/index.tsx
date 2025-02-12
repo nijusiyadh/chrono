@@ -12,11 +12,13 @@ import { CiPause1, CiPlay1 } from 'react-icons/ci'
 import { useGetLog } from '@/hooks/api'
 import { AiOutlineLoading } from 'react-icons/ai'
 import { useGlobalContext } from '@/providers'
+import clsx from 'clsx'
 
 export const Timer = () => {
   const { activeDate, activeProject } = useGlobalContext()
   const { mutateAsync: addEvent, isPending: isAddingEvent } = useAddEvent()
   const [startTime, setStartTime] = useState<Date | null>(null)
+  const [isToday, setIsToday] = useState(true)
 
   const {
     data: logs,
@@ -30,6 +32,21 @@ export const Timer = () => {
       refetchLogs()
     }
   }, [activeDate, refetchLogs])
+
+  useEffect(() => {
+    if (activeDate) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const activeDateNew = new Date(activeDate)
+      activeDateNew.setHours(0, 0, 0, 0)
+
+      if (activeDateNew.getTime() === today.getTime()) {
+        setIsToday(true)
+      } else {
+        setIsToday(false)
+      }
+    }
+  }, [activeDate])
 
   const {
     seconds,
@@ -83,7 +100,15 @@ export const Timer = () => {
   return (
     <div className='flex flex-col items-center justify-center gap-11'>
       <div className='flex flex-col'>
-        <span className='flex items-center justify-center text-center text-[80px] font-normal leading-[105px] text-text-yellow'>
+        <span
+          className={clsx(
+            'flex items-center justify-center text-center text-[80px] font-normal leading-[105px]',
+            {
+              'text-text-yellow': isToday,
+              'text-text-faded': !isToday
+            }
+          )}
+        >
           {hours < 10 ? `0${hours}` : hours}:
           {minutes < 10 ? `0${minutes}` : minutes}:
           <span className='font-light'>
@@ -105,14 +130,36 @@ export const Timer = () => {
       </div>
       <div className='flex items-start justify-center gap-5'>
         <button
-          disabled={isAddingEvent}
+          disabled={isAddingEvent || !isToday}
           onClick={handlePlayButtonClick}
-          className='relative flex aspect-square w-14 items-center justify-center rounded-full border-2 border-text-yellow'
+          className={clsx(
+            'relative flex aspect-square w-14 items-center justify-center rounded-full border-2',
+            {
+              'border-text-yellow': isToday,
+              'border-text-faded': !isToday
+            }
+          )}
         >
           {isRunning ? (
-            <CiPause1 className='absolute left-1/2 top-1/2 size-6 -translate-x-1/2 -translate-y-1/2 text-text-yellow' />
+            <CiPause1
+              className={clsx(
+                'absolute left-1/2 top-1/2 size-6 -translate-x-1/2 -translate-y-1/2',
+                {
+                  'text-text-yellow': isToday,
+                  'text-text-faded': !isToday
+                }
+              )}
+            />
           ) : (
-            <CiPlay1 className='absolute left-[53%] top-1/2 size-6 -translate-x-1/2 -translate-y-1/2 text-text-yellow' />
+            <CiPlay1
+              className={clsx(
+                'absolute left-[53%] top-1/2 size-6 -translate-x-1/2 -translate-y-1/2',
+                {
+                  'text-text-yellow': isToday,
+                  'text-text-faded': !isToday
+                }
+              )}
+            />
           )}
         </button>
         <button onClick={handleResetButtonClick} className='aspect-square w-14'>

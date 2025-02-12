@@ -85,7 +85,7 @@ export const addEvent = async (data: {
         const newEvent = await tx.events.create({
           data: {
             projectId: project.id,
-            startTime: new Date(data.startTime),
+            startTime: new Date(data.startTime).toISOString(),
             duration: data.duration ?? 0,
             userId: existing.id,
             logId: updatedLog.id
