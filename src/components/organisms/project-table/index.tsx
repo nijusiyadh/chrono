@@ -43,7 +43,8 @@ export const ProjectTable = () => {
         </thead>
         <tbody>
           {!isFetching &&
-            projects?.length &&
+            projects &&
+            projects?.length > 0 &&
             projects?.map((item, index) => (
               <tr
                 className={clsx(
