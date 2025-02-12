@@ -180,3 +180,36 @@ export const updateEvent = async (data: {
     throw new Error('Failed to update event', { cause: error })
   }
 }
+
+export const updateEventProject = async (data: {
+  id: number
+  projectId: number
+}) => {
+  const user = await currentUser()
+
+  const existing = await prismaClient.users.findFirst({
+    where: {
+      uId: user?.id
+    }
+  })
+
+  if (!existing) {
+    throw new Error('Unauthorized')
+  }
+
+  try {
+    const updatedEvent = await prismaClient.events.update({
+      where: {
+        id: data.id
+      },
+      data: {
+        projectId: data.projectId
+      }
+    })
+
+    return updatedEvent
+  } catch (error) {
+    console.log(error)
+    throw new Error('Failed to update event', { cause: error })
+  }
+}
