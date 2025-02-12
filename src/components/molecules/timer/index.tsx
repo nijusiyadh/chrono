@@ -17,7 +17,7 @@ import clsx from 'clsx'
 export const Timer = () => {
   const { activeDate, activeProject } = useGlobalContext()
   const { mutateAsync: addEvent, isPending: isAddingEvent } = useAddEvent()
-  const [startTime, setStartTime] = useState<Date | null>(null)
+  const [startTime, setStartTime] = useState<string | null>(null)
   const [isToday, setIsToday] = useState(true)
 
   const {
@@ -67,7 +67,7 @@ export const Timer = () => {
     if (!isRunning) {
       setStartTime(null)
       start()
-      setStartTime(new Date())
+      setStartTime(new Date().toISOString())
     } else {
       pause()
       if (!activeProject) {
@@ -76,10 +76,7 @@ export const Timer = () => {
       await addEvent(
         {
           projectId: activeProject?.id,
-          startTime: format(
-            new Date(startTime ?? ''),
-            'yyyy-MM-dd HH:mm:ss.SSS'
-          ),
+          startTime: startTime ?? '',
           endTime: format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS'),
           duration: totalSeconds
         },
