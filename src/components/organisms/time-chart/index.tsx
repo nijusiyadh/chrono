@@ -53,7 +53,7 @@ export const TimeChart = () => {
           </tr>
         </thead>
         <tbody>
-          {!isLoading && !isFetching && (
+          {!isLoading && (
             <>
               {events &&
                 events.map((item, index) => (
